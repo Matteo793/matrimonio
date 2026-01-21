@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matrimonio Cristiana e Matteo – 2 Maggio 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6b4f4f;
+      --secondary: #f5efe6;
+      --accent: #c9a24d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      background: var(--secondary);
+      color: #333;
+    }
+    header {
+      background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('https://images.unsplash.com/photo-1523438885200-e635ba2c371e') center/cover no-repeat;
+      color: white;
+      text-align: center;
+      padding: 80px 20px;
+    }
+    header h1 {
+      font-size: 4rem;
+      margin-bottom: 10px;
+      font-family: 'Great Vibes', cursive;
+    }
+    header p { font-size: 1.2rem; letter-spacing: 1px; }
+    section { max-width: 900px; margin: 60px auto; padding: 0 20px; }
+    h2 { text-align: center; color: var(--primary); margin-bottom: 40px; font-size: 2.2rem; }
+    .timeline { display: grid; grid-template-columns: 1fr; gap: 25px; }
+    .event { background: white; border-left: 6px solid var(--accent); padding: 20px 25px; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+    .event time { font-weight: bold; color: var(--accent); font-size: 1.1rem; }
+    .event h3 { margin: 10px 0 5px; color: var(--primary); }
+    .location { text-align: center; background: white; padding: 40px 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+    form { background: white; padding: 40px 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); max-width: 600px; margin: 0 auto; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit; }
+    button { margin-top: 25px; padding: 12px; width: 100%; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 1.1rem; cursor: pointer; }
+    button:hover { opacity: 0.9; }
+    footer { text-align: center; padding: 30px 20px; background: #eee; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Matrimonio Cristiana e Matteo</h1>
+    <p>2 Maggio 2026 · Roma</p>
+  </header>
+
+  <section>
+    <h2>Il piano della giornata</h2>
+    <div class="timeline">
+      <div class="event">
+        <time>16:00</time>
+        <h3>Cerimonia</h3>
+        <p>Chiesa di Santa Maria Ausiliatrice, Piazza di Santa Maria Ausiliatrice, 54, 00181 Roma RM.</p>
+      </div>
+      <div class="event">
+        <time>Subito dopo</time>
+        <h3>Ricevimento</h3>
+        <p>Ristorante Villa Appia Eventi, Via Appia Nuova, 244, 00047 Marino RM.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Location</h2>
+    <div class="location">
+      <p><strong>Chiesa di Santa Maria Ausiliatrice</strong></p>
+      <p>Piazza di Santa Maria Ausiliatrice, 54, 00181 Roma RM</p>
+      <br />
+      <p><strong>Villa Appia Eventi</strong></p>
+      <p>Via Appia Nuova, 244, 00047 Marino RM</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Conferma la tua presenza</h2>
+    <p style="text-align:center">Ti chiediamo gentilmente di confermare entro <strong>Marzo 2026</strong>.</p>
+    <form id="rsvpForm">
+      <label>Nome e Cognome</label>
+      <input type="text" name="nome" required />
+
+      <label>Parteciperai?</label>
+      <select name="presenza" required>
+        <option value="">Seleziona</option>
+        <option>Sì, con piacere</option>
+        <option>No, non potrò esserci</option>
+      </select>
+
+      <label>Numero adulti</label>
+      <input type="number" name="adulti" min="0" />
+
+      <label>Numero bambini</label>
+      <input type="number" name="bambini" min="0" />
+
+      <label>Esigenze alimentari</label>
+      <select name="dieta">
+        <option>Nessuna</option>
+        <option>Vegetariano</option>
+        <option>Vegano</option>
+        <option>Intolleranze / Allergie</option>
+        <option>Altro</option>
+      </select>
+
+      <label>Note (specificare allergie o altro)</label>
+      <textarea name="note" rows="4"></textarea>
+
+      <button type="submit">Invia conferma</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>Non vediamo l'ora di festeggiare con voi ❤️</p>
+  </footer>
+
+  <script>
+    // Google Script già pronto e autorizzato
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby2EQA43Ngu_y7GFrqlBmCuvigFu6BQzNGJ6XOTPu1_Y4lEhmxNeRZl3dK5YEYIlQB8/exec';
+    const form = document.getElementById('rsvpForm');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+        .then(response => response.text())
+        .then(text => {
+          if(text === 'OK') {
+            alert('Grazie! La tua conferma è stata registrata correttamente.');
+            form.reset();
+          } else {
+            alert('C'è stato un problema, riprova più tardi.');
+          }
+        })
+        .catch(() => alert('Errore nell\'invio. Riprova più tardi.'));
+    });
+  </script>
+
+</body>
+</html>
