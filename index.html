@@ -61,7 +61,7 @@
       transition: max-height 0.5s ease, opacity 0.5s ease;
     }
     #campiPartecipazione.show {
-      max-height: 500px; /* sufficientemente alto per contenere i campi */
+      max-height: 500px;
       opacity: 1;
     }
   </style>
@@ -182,8 +182,6 @@
         bambini.required = false;
         adulti.value = '';
         bambini.value = '';
-        adulti.style.borderColor = '#ccc';
-        bambini.style.borderColor = '#ccc';
       }
     });
 
@@ -191,24 +189,27 @@
       e.preventDefault();
       adulti.style.borderColor = '#ccc';
       bambini.style.borderColor = '#ccc';
-      let errore = false;
 
+      // Controllo campi obbligatori solo se partecipano
       if (presenza.value.startsWith('Sì')) {
-        if (adulti.value === "") { adulti.style.borderColor = 'red'; errore = true; }
-        if (bambini.value === "") { bambini.style.borderColor = 'red'; errore = true; }
-        if (errore) {
+        if (adulti.value === "" || bambini.value === "") {
           message.textContent = 'Per favore, seleziona sia il numero di adulti che di bambini.';
           message.style.color = 'red';
+          if (adulti.value === "") adulti.style.borderColor = 'red';
+          if (bambini.value === "") bambini.style.borderColor = 'red';
           return;
         }
       }
+
+      // Preparazione dati da inviare
+      const formData = new FormData(form);
 
       message.textContent = 'Invio in corso…';
       message.style.color = '#6b4f4f';
       button.disabled = true;
       button.textContent = 'Invio...';
 
-      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+      fetch(scriptURL, { method: 'POST', body: formData })
         .then(res => res.text())
         .then(text => {
           if (text === 'OK') {
@@ -234,6 +235,3 @@
 
 </body>
 </html>
-
-
-
