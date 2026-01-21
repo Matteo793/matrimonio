@@ -39,7 +39,15 @@
     .location { text-align: center; background: white; padding: 40px 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
     form { background: white; padding: 40px 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); max-width: 600px; margin: 0 auto; }
     label { display: block; margin-top: 15px; font-weight: bold; }
-    select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+      font-size: 1rem; /* uguale per tutti */
+    }
     button { margin-top: 25px; padding: 12px; width: 100%; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 1.1rem; cursor: pointer; }
     button:hover { opacity: 0.9; }
     #formMessage { text-align: center; margin-top: 20px; font-weight: bold; color: green; }
@@ -151,7 +159,6 @@
     const adulti = form.querySelector('select[name="adulti"]');
     const bambini = form.querySelector('select[name="bambini"]');
 
-    // Obbligatorietà condizionata adulti/bambini
     presenza.addEventListener('change', () => {
       if (presenza.value.startsWith('Sì')) {
         adulti.required = true;
@@ -166,14 +173,11 @@
 
     form.addEventListener('submit', e => {
       e.preventDefault();
-
-      // Controllo se obbligatorio e non selezionato
       if (presenza.value.startsWith('Sì') && (adulti.value === "" || bambini.value === "")) {
         message.textContent = 'Per favore, seleziona il numero di adulti e bambini.';
         message.style.color = 'red';
         return;
       }
-
       message.textContent = 'Invio in corso…';
       message.style.color = '#6b4f4f';
       button.disabled = true;
@@ -204,4 +208,5 @@
 
 </body>
 </html>
+
 
