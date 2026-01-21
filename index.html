@@ -39,9 +39,10 @@
     .location { text-align: center; background: white; padding: 40px 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
     form { background: white; padding: 40px 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); max-width: 600px; margin: 0 auto; }
     label { display: block; margin-top: 15px; font-weight: bold; }
-    input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit; }
+    select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit; }
     button { margin-top: 25px; padding: 12px; width: 100%; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 1.1rem; cursor: pointer; }
     button:hover { opacity: 0.9; }
+    #formMessage { text-align: center; margin-top: 20px; font-weight: bold; color: green; }
     footer { text-align: center; padding: 30px 20px; background: #eee; font-size: 0.95rem; }
   </style>
 </head>
@@ -94,10 +95,30 @@
       </select>
 
       <label>Numero adulti</label>
-      <input type="number" name="adulti" min="0" />
+      <select name="adulti">
+        <option value="">Seleziona</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+      </select>
 
       <label>Numero bambini</label>
-      <input type="number" name="bambini" min="0" />
+      <select name="bambini">
+        <option value="">Seleziona</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
 
       <label>Esigenze alimentari</label>
       <select name="dieta">
@@ -113,6 +134,8 @@
 
       <button type="submit">Invia conferma</button>
     </form>
+
+    <p id="formMessage"></p>
   </section>
 
   <footer>
@@ -120,59 +143,63 @@
   </footer>
 
   <script>
-   
-  const scriptURL = 'https://script.google.com/macros/s/AKfycby2EQA43Ngu_y7GFrqlBmCuvigFu6BQzNGJ6XOTPu1_Y4lEhmxNeRZl3dK5YEYIlQB8/exec';
-  const form = document.getElementById('rsvpForm');
-  const message = document.getElementById('formMessage');
-  const button = form.querySelector('button');
-  const presenza = form.querySelector('select[name="presenza"]');
-  const adulti = form.querySelector('input[name="adulti"]');
-  const bambini = form.querySelector('input[name="bambini"]');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby2EQA43Ngu_y7GFrqlBmCuvigFu6BQzNGJ6XOTPu1_Y4lEhmxNeRZl3dK5YEYIlQB8/exec';
+    const form = document.getElementById('rsvpForm');
+    const message = document.getElementById('formMessage');
+    const button = form.querySelector('button');
+    const presenza = form.querySelector('select[name="presenza"]');
+    const adulti = form.querySelector('select[name="adulti"]');
+    const bambini = form.querySelector('select[name="bambini"]');
 
-  // Obbligatorietà condizionata
-  presenza.addEventListener('change', () => {
-    if (presenza.value.startsWith('Sì')) {
-      adulti.required = true;
-      bambini.required = true;
-    } else {
-      adulti.required = false;
-      bambini.required = false;
-      adulti.value = '';
-      bambini.value = '';
-    }
-  });
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-
-    message.textContent = 'Invio in corso…';
-    message.style.color = '#6b4f4f';
-    button.disabled = true;
-    button.textContent = 'Invio...';
-
-    fetch(scriptURL, {
-      method: 'POST',
-      body: new FormData(form)
-    })
-    .then(res => res.text())
-    .then(text => {
-      if (text === 'OK') {
-        message.textContent = 'Grazie! La tua conferma è stata registrata 💛';
-        message.style.color = 'green';
-        form.reset();
+    // Obbligatorietà condizionata adulti/bambini
+    presenza.addEventListener('change', () => {
+      if (presenza.value.startsWith('Sì')) {
+        adulti.required = true;
+        bambini.required = true;
       } else {
-        throw new Error();
+        adulti.required = false;
+        bambini.required = false;
+        adulti.value = '';
+        bambini.value = '';
       }
-    })
-    .catch(() => {
-      message.textContent = 'Errore nell’invio. Riprova più tardi.';
-      message.style.color = 'red';
-    })
-    .finally(() => {
-      button.disabled = false;
-      button.textContent = 'Invia conferma';
     });
-  });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      // Controllo se obbligatorio e non selezionato
+      if (presenza.value.startsWith('Sì') && (adulti.value === "" || bambini.value === "")) {
+        message.textContent = 'Per favore, seleziona il numero di adulti e bambini.';
+        message.style.color = 'red';
+        return;
+      }
+
+      message.textContent = 'Invio in corso…';
+      message.style.color = '#6b4f4f';
+      button.disabled = true;
+      button.textContent = 'Invio...';
+
+      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+        .then(res => res.text())
+        .then(text => {
+          if (text === 'OK') {
+            message.textContent = 'Grazie! La tua conferma è stata registrata 💛';
+            message.style.color = 'green';
+            form.reset();
+          } else {
+            message.textContent = 'C’è stato un problema, riprova più tardi.';
+            message.style.color = 'red';
+          }
+        })
+        .catch(() => {
+          message.textContent = 'Errore nell’invio. Riprova più tardi.';
+          message.style.color = 'red';
+        })
+        .finally(() => {
+          button.disabled = false;
+          button.textContent = 'Invia conferma';
+        });
+    });
   </script>
 
 </body>
