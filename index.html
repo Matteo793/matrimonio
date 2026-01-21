@@ -120,27 +120,61 @@
   </footer>
 
   <script>
-    // Google Script già pronto e autorizzato
-    const scriptURL =   // Google Script già pronto e autorizzato
-    const scriptURL = 'https://script.google.com/macros/s/AKfycby2EQA43Ngu_y7GFrqlBmCuvigFu6BQzNGJ6XOTPu1_Y4lEhmxNeRZl3dK5YEYIlQB8/exec';
-    const form = document.getElementById('rsvpForm');
-';
-    const form = document.getElementById('rsvpForm');
+   <script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycby2EQA43Ngu_y7GFrqlBmCuvigFu6BQzNGJ6XOTPu1_Y4lEhmxNeRZl3dK5YEYIlQB8/exec';
+  const form = document.getElementById('rsvpForm');
+  const message = document.getElementById('formMessage');
+  const button = form.querySelector('button');
+  const presenza = form.querySelector('select[name="presenza"]');
+  const adulti = form.querySelector('input[name="adulti"]');
+  const bambini = form.querySelector('input[name="bambini"]');
 
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
-        .then(response => response.text())
-        .then(text => {
-          if(text === 'OK') {
-            alert('Grazie! La tua conferma è stata registrata correttamente.');
-            form.reset();
-          } else {
-            alert('C'è stato un problema, riprova più tardi.');
-          }
-        })
-        .catch(() => alert('Errore nell\'invio. Riprova più tardi.'));
+  // Obbligatorietà condizionata
+  presenza.addEventListener('change', () => {
+    if (presenza.value.startsWith('Sì')) {
+      adulti.required = true;
+      bambini.required = true;
+    } else {
+      adulti.required = false;
+      bambini.required = false;
+      adulti.value = '';
+      bambini.value = '';
+    }
+  });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    message.textContent = 'Invio in corso…';
+    message.style.color = '#6b4f4f';
+    button.disabled = true;
+    button.textContent = 'Invio...';
+
+    fetch(scriptURL, {
+      method: 'POST',
+      body: new FormData(form)
+    })
+    .then(res => res.text())
+    .then(text => {
+      if (text === 'OK') {
+        message.textContent = 'Grazie! La tua conferma è stata registrata 💛';
+        message.style.color = 'green';
+        form.reset();
+      } else {
+        throw new Error();
+      }
+    })
+    .catch(() => {
+      message.textContent = 'Errore nell’invio. Riprova più tardi.';
+      message.style.color = 'red';
+    })
+    .finally(() => {
+      button.disabled = false;
+      button.textContent = 'Invia conferma';
     });
+  });
+</script>
+
   </script>
 
 </body>
