@@ -46,11 +46,11 @@
       border-radius: 4px;
       border: 1px solid #ccc;
       font-family: inherit;
-      font-size: 1rem; /* uguale per tutti */
+      font-size: 1rem;
     }
     button { margin-top: 25px; padding: 12px; width: 100%; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 1.1rem; cursor: pointer; }
     button:hover { opacity: 0.9; }
-    #formMessage { text-align: center; margin-top: 20px; font-weight: bold; color: green; }
+    #formMessage { text-align: center; margin-top: 20px; font-weight: bold; }
     footer { text-align: center; padding: 30px 20px; background: #eee; font-size: 0.95rem; }
   </style>
 </head>
@@ -65,7 +65,7 @@
     <h2>Il piano della giornata</h2>
     <div class="timeline">
       <div class="event">
-        <time>Ore: 16:00</time>
+        <time>Ore 16:00</time>
         <h3>Cerimonia</h3>
         <p>Chiesa di Santa Maria Ausiliatrice, Piazza di Santa Maria Ausiliatrice, 54, 00181 Roma RM.</p>
       </div>
@@ -102,40 +102,36 @@
         <option>No, non potrò esserci</option>
       </select>
 
-      <label>Numero adulti</label>
-      <select name="adulti">
-        <option value="">Seleziona</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-      </select>
+      <!-- Contenitore campi condizionati -->
+      <div id="campiPartecipazione">
+        <label>Numero adulti</label>
+        <select name="adulti">
+          <option value="">Seleziona</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
 
-      <label>Numero bambini</label>
-      <select name="bambini">
-        <option value="">Seleziona</option>
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
+        <label>Numero bambini</label>
+        <select name="bambini">
+          <option value="">Seleziona</option>
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
 
-      <label>Esigenze alimentari</label>
-      <select name="dieta">
-        <option>Nessuna</option>
-        <option>Vegetariano</option>
-        <option>Vegano</option>
-        <option>Intolleranze / Allergie</option>
-        <option>Altro</option>
-      </select>
+        <label>Esigenze alimentari</label>
+        <select name="dieta">
+          <option>Nessuna</option>
+          <option>Vegetariano</option>
+          <option>Vegano</option>
+          <option>Intolleranze / Allergie</option>
+          <option>Altro</option>
+        </select>
+      </div>
 
       <label>Note (specificare allergie o altro)</label>
       <textarea name="note" rows="4"></textarea>
@@ -156,28 +152,55 @@
     const message = document.getElementById('formMessage');
     const button = form.querySelector('button');
     const presenza = form.querySelector('select[name="presenza"]');
+    const campiPartecipazione = document.getElementById('campiPartecipazione');
     const adulti = form.querySelector('select[name="adulti"]');
     const bambini = form.querySelector('select[name="bambini"]');
 
+    // Nascondi i campi all'inizio
+    campiPartecipazione.style.display = 'none';
+
     presenza.addEventListener('change', () => {
       if (presenza.value.startsWith('Sì')) {
+        campiPartecipazione.style.display = 'block';
         adulti.required = true;
         bambini.required = true;
       } else {
+        campiPartecipazione.style.display = 'none';
         adulti.required = false;
         bambini.required = false;
         adulti.value = '';
         bambini.value = '';
+        adulti.style.borderColor = '#ccc';
+        bambini.style.borderColor = '#ccc';
       }
     });
 
     form.addEventListener('submit', e => {
       e.preventDefault();
-      if (presenza.value.startsWith('Sì') && (adulti.value === "" || bambini.value === "")) {
-        message.textContent = 'Per favore, seleziona il numero di adulti e bambini.';
-        message.style.color = 'red';
-        return;
+
+      // Reset bordi
+      adulti.style.borderColor = '#ccc';
+      bambini.style.borderColor = '#ccc';
+
+      let errore = false;
+
+      // Controllo obbligatorietà adulti/bambini se partecipa
+      if (presenza.value.startsWith('Sì')) {
+        if (adulti.value === "") {
+          adulti.style.borderColor = 'red';
+          errore = true;
+        }
+        if (bambini.value === "") {
+          bambini.style.borderColor = 'red';
+          errore = true;
+        }
+        if (errore) {
+          message.textContent = 'Per favore, seleziona sia il numero di adulti che di bambini.';
+          message.style.color = 'red';
+          return;
+        }
       }
+
       message.textContent = 'Invio in corso…';
       message.style.color = '#6b4f4f';
       button.disabled = true;
@@ -190,6 +213,7 @@
             message.textContent = 'Grazie! La tua conferma è stata registrata 💛';
             message.style.color = 'green';
             form.reset();
+            campiPartecipazione.style.display = 'none';
           } else {
             message.textContent = 'C’è stato un problema, riprova più tardi.';
             message.style.color = 'red';
@@ -208,5 +232,6 @@
 
 </body>
 </html>
+
 
 
